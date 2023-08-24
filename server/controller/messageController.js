@@ -3,9 +3,12 @@ const path = require('path')
 const fsPromises = require('fs').promises
 const fs = require('fs')
 
+const date = new Date().toLocaleDateString()
+const time = new Date().toLocaleTimeString()
+
 module.exports.getMessages = async (req, res) => {
     try {
-        const result = await pool.query('SELECT mp.msg_id, mp.msg_phone, ms.sms_msg, ms.status FROM message_sms ms INNER JOIN message_phone mp ON ms.msg_id = mp.msg_id ORDER BY mp.msg_id ASC')
+        const result = await pool.query('SELECT mp.msg_id, mp.msg_phone, ms.sms_id, ms.sms_msg FROM message_sms ms INNER JOIN message_phone mp ON ms.msg_id = mp.msg_id ORDER BY mp.msg_id ASC')
 
         if(result.rowCount > 0) {
             if(!fs.existsSync(path.join(__dirname, 'files'))) {
@@ -13,7 +16,7 @@ module.exports.getMessages = async (req, res) => {
             }
 
             try {
-                await fsPromises.writeFile(path.join(__dirname, 'files', 'messages.json'), JSON.stringify({ messages: result.rows }))
+                await fsPromises.appendFile(path.join(__dirname, 'files', 'messages.txt'),`${req.method} ${req.baseUrl} ${date} ${time}\n`)
             } catch (err) {
                 console.log(err)
             }
@@ -26,13 +29,40 @@ module.exports.getMessages = async (req, res) => {
     }
 }
 
-module.exports.updateMessage = async (req, res) => {
+module.exports.getMessageById = async (req, res) => {
+  const id = parseInt(req.params.id)
+  try {
+      const result = await pool.query("SELECT mp.msg_id, ms.sms_id, ms.sms_msg, ms.status FROM message_sms ms INNER JOIN message_phone mp ON ms.msg_id = mp.msg_id WHERE mp.msg_id = $1", [id])
+    
+      res.status(200).json({ phone_message: result.rows })
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+module.exports.registerMessage = async (req, res) => {
     const { message, status, phone } = req.body
-    const { id } = req.params
+    const id = Math.floor(Math.random() * 2000) + 10
 
     try {
-        await pool.query('UPDATE message_phone SET msg_phone = $1 WHERE msg_id = $2', [phone, id])
-        await pool.query('UPDATE message_sms SET sms_msg = $1, status = $2 WHERE sms_id = $3', [message, status, id])
+        await pool.query("INSERT INTO message_phone (msg_id, msg_phone) VALUES($1, $2)", [id, phone])
+        await pool.query("INSERT INTO message_sms(sms_msg, status, msg_id) VALUES($1, $2, $3)", [message, status, id])
+    } catch (err) {
+        console.log(err)
+    }
+
+    res.status(201).json({ message: `Message id created: ${id}` })
+}
+
+module.exports.updateMessage = async (req, res) => {
+    const { msg_phone, sms_msg, status } = req.body
+    const id  = parseInt(req.params.id)
+
+    console.log('ID:', id, msg_phone)
+
+    try {
+        await pool.query('UPDATE message_phone SET msg_phone = $1 WHERE msg_id = $2', [msg_phone, id])
+        await pool.query('UPDATE message_sms SET sms_msg = $1, status = $2 WHERE msg_id = $3', [sms_msg, status, id])
 
         res.status(201).json({ message: `Message updated: ${id}` })
     } catch (err) {
@@ -40,47 +70,15 @@ module.exports.updateMessage = async (req, res) => {
     }
 }
 
-module.exports.getSend = async (req, res) => {
-    const result = await pool.query("SELECT mp.msg_phone, ms.sms_msg, ms.status FROM message_sms ms INNER JOIN message_phone mp ON ms.msg_id = mp.msg_id WHERE ms.status = 'enviado'")
-
-    res.status(200).json({ enviado: result.rows })
-
-    try {
-        if(!fs.existsSync(path.join(__dirname, 'files'))) {
-            fsPromises.mkdir(path.join(__dirname, 'files'))
-        }
-        await fsPromises.writeFile(path.join(__dirname, 'files', 'enviado.json'), JSON.stringify({ enviado: result.rows }))
-    } catch (err) {
-        console.log(err)
-    }
-}
-
-module.exports.getReceived = async (req, res) => {
-    const result = await pool.query("SELECT mp.msg_phone, ms.sms_msg, ms.status FROM message_sms ms INNER JOIN message_phone mp ON ms.msg_id = mp.msg_id WHERE ms.status = 'recebido'")
+module.exports.deletePhone = async (req, res) => {
+    const id = parseInt(req.params.id)
     
-    res.status(200).json({ recebido: result.rows })
- 
     try {
-        if(!fs.existsSync(path.join(__dirname, 'files'))) {
-            fsPromises.mkdir(path.join(__dirname, 'files'))
-        }
-        await fsPromises.writeFile(path.join(__dirname, 'files', 'recebido.json'), JSON.stringify({ recebido: result.rows }))
+        await pool.query("DELETE FROM message_phone WHERE msg_id = $1", [id])
+
+        res.status(200).json({ message: `PhoneID: ${id}` })
     } catch (err) {
         console.log(err)
     }
 }
 
-module.exports.getNotSend = async (req, res) => {
-    const result = await pool.query("SELECT mp.msg_phone, ms.sms_msg, ms.status FROM message_sms ms INNER JOIN message_phone mp ON ms.msg_id = mp.msg_id WHERE ms.status = 'erro de envio'")
-
-    res.status(200).json({ erroEnvio: result.rows })
-
-    try {
-        if(!fs.existsSync(path.join(__dirname, 'files'))) {
-            fsPromises.mkdir(path.join(__dirname, 'files'))
-        }
-        await fsPromises.writeFile(path.join(__dirname, 'files', 'erro-de-envio.json'), JSON.stringify({ erroEnvio: result.rows }))
-    } catch (err) {
-        console.log(err)
-    }
-}

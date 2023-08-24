@@ -1,8 +1,18 @@
+import { Outlet } from "react-router-dom"
+import Header from "./component/Header"
+
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 const App = () => {
   return (
-    <div className="App">
-      <h1>SMS Message</h1>
-    </div>
+    <section>
+     <Header />
+      <div  className="container">
+          <Outlet />
+          <ToastContainer />
+      </div>
+    </section>
   );
 }
 

@@ -4,17 +4,11 @@ const controller = require('../controller/messageController')
 
 router.route('/')
 .get(controller.getMessages)
+.post(controller.registerMessage)
 
 router.route('/:id')
+.get(controller.getMessageById)
 .put(controller.updateMessage)
-
-router.route('/send')
-.get(controller.getSend)
-
-router.route('/received')
-.get(controller.getReceived)
-
-router.route('/not-send')
-.get(controller.getNotSend)
+.delete(controller.deletePhone)
 
 module.exports = router 
