@@ -1,11 +1,12 @@
-<h4>Instalação Backend<strong></h4>
+<h4>Instalação Backend</h4>
+    
 <ol>
     <li>Rodar o comando npm install para instalar as dependências do projeto.</li>
     <li>Criar um arquivo .env para configurar o ambiente, variáveis: PORT, PGUSER, PGPORT, PGPASSWORD, PGHOST, PGDATABASE.</li>
     <li>Rodar o comando npm run start para iniciar o servidor.</li> 
 </ol>
 
-<h4>Instalação Frontend<strong></h4>
+<h4>Instalação Frontend</h4>
     
 <ol>
     <li>Rodar o comando npm install para instalar as dependências do projeto.</li>
