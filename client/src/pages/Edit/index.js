@@ -10,6 +10,7 @@ const Edit = () => {
     })
     const navigate = useNavigate()
     const { id } = useParams()
+    const [err, setErr] = useState(false)
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -22,6 +23,12 @@ const Edit = () => {
 
     const updateMessage = async (e) => {
         e.preventDefault()
+
+        if(data.msg_phone === '' || data.sms_msg === '' || data.status === '') {
+            setErr(true)
+            return
+        }
+
         try {
             const res = await fetch(`${process.env.REACT_APP_SERVERURL}/message/${id}`, {
                 method: "PUT",
@@ -61,6 +68,7 @@ const Edit = () => {
             </Link>
             <div className="row">
                 <div className="col-md-6 mx-auto">
+                    {err && <h4 className="alert alert-danger">All fields are required.</h4>}
                     <form onSubmit={e => updateMessage(e)}>
                         <div className="form-group">
                             <label htmlFor="msg_phone">Phone</label>
