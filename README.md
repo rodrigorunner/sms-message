@@ -26,7 +26,7 @@
     <li>Rodar o comando <strong>npm start</strong> para iniciar o projeto.</li>
 </ul>
 
-<h4>Modelagem Entidade Relacionamento</h4>
+<h4>Modelagem Entidade-Relacionamento</h4>
 
 ![Captura de tela de 2023-08-24 09-59-08](https://github.com/rodrigorunner/sms-message/assets/55710562/aad5501d-2055-40d7-abe1-075594bb1e34)
 
