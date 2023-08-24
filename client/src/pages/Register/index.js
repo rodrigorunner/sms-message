@@ -52,6 +52,8 @@ const Register = () => {
             <Link className="d-block text-center" to="/">
                 <button className="btn btn-dark mt-2 ml-2"><i class="fa-solid fa-house"></i></button>
             </Link>
+
+            <p className="text-center mt-2 text-muted"><strong>Please, leave a joke.</strong></p>
         
             <div className="row">
                 <div className="col-md-6 mx-auto">
@@ -77,7 +79,7 @@ const Register = () => {
                             name="message"
                             id="msg"
                             value={data.message}
-                            placeholder="Escreva sua mensagem"
+                            placeholder="Type a joke"
                             onChange={handleChange}
                             />
                         </div>

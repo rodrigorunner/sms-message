@@ -55,7 +55,7 @@ const Home = () => {
        <div className="responsive-table">
 
         <Link to='/register'>
-            <button className="btn btn-dark mt-2">Register</button>
+            <button className="btn btn-dark mt-2">Joke <i className="fa-solid fa-plus"></i></button>
         </Link>
         <table className="table table-stripped mt-2">
             <thead className="table-dark">

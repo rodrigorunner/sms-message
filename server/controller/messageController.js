@@ -2,6 +2,7 @@ const pool = require('../config/db')
 const path = require('path')
 const fsPromises = require('fs').promises
 const fs = require('fs')
+const AppError = require('../utils/AppError')
 
 const date = new Date().toLocaleDateString()
 const time = new Date().toLocaleTimeString()
@@ -44,6 +45,10 @@ module.exports.registerMessage = async (req, res) => {
     const { message, status, phone } = req.body
     const id = Math.floor(Math.random() * 2000) + 10
 
+    if(!message || !status|| !phone) {
+        return
+    }
+
     try {
         await pool.query("INSERT INTO message_phone (msg_id, msg_phone) VALUES($1, $2)", [id, phone])
         await pool.query("INSERT INTO message_sms(sms_msg, status, msg_id) VALUES($1, $2, $3)", [message, status, id])
@@ -58,7 +63,10 @@ module.exports.updateMessage = async (req, res) => {
     const { msg_phone, sms_msg, status } = req.body
     const id  = parseInt(req.params.id)
 
-    console.log('ID:', id, msg_phone)
+    if(!msg_phone || !sms_msg || !status) {
+        res.redirect('/')
+        return
+    }
 
     try {
         await pool.query('UPDATE message_phone SET msg_phone = $1 WHERE msg_id = $2', [msg_phone, id])

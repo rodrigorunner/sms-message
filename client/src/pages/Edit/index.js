@@ -68,7 +68,7 @@ const Edit = () => {
             </Link>
             <div className="row">
                 <div className="col-md-6 mx-auto">
-                    {err && <h4 className="alert alert-danger">All fields are required.</h4>}
+                    {err && <h4 className="alert alert-danger mt-2">All fields are required.</h4>}
                     <form onSubmit={e => updateMessage(e)}>
                         <div className="form-group">
                             <label htmlFor="msg_phone">Phone</label>
@@ -89,7 +89,7 @@ const Edit = () => {
                             name="sms_msg"
                             id="sms_msg"
                             value={data.sms_msg}
-                            placeholder="Escreva sua mensagem"
+                            placeholder="Type a joke."
                             onChange={handleChange}
                             />
                         </div>

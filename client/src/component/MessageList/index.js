@@ -11,7 +11,7 @@ const MessageList = ({ msg, deletePhone }) => {
             </td>
             <td>
                 <Link  to={`/message/${msg.msg_id}/edit`}>
-                    <button className="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button className="btn btn-warning"><i className="fa-solid fa-pen-to-square"></i></button>
                 </Link>
             </td>
             <td>
